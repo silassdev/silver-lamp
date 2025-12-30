@@ -94,12 +94,3 @@ GitBattle was built with a strong focus on professional engineering standards:
 
 This project is released under the MIT License.
 You are free to use, modify, and distribute it in accordance with the license terms.
-
----
-
-If you want, I can also:
-
-* Add a **Contributing** section
-* Write a **Roadmap** section
-* Optimize this README for GitHub SEO
-* Tailor it for recruiters or portfolio presentation
