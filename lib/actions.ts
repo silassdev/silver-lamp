@@ -3,7 +3,8 @@
 import { Octokit } from "octokit";
 import { connectToDatabase } from "@/lib/db";
 import { Leaderboard } from "@/models/Leaderboard";
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -35,7 +36,7 @@ async function getStats(username: string) {
 
 export async function battleAction(username1: string, username2: string) {
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
     const [p1, p2] = await Promise.all([getStats(username1), getStats(username2)]);
 
     const winner = p1.score > p2.score ? p1 : p2;
