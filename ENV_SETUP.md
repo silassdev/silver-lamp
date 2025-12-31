@@ -87,6 +87,11 @@ GITHUB_CLIENT_SECRET=your-github-client-secret-here
 # MongoDB Connection (if not already set)
 # MONGODB_URI=mongodb://localhost:27017/gitbattle
 # or your MongoDB Atlas connection string
+
+# Email Configuration (for Contact Form)
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-google-app-password
+CONTACT_EMAIL=recipient-email@gmail.com
 ```
 
 ### Generating NEXTAUTH_SECRET
@@ -98,6 +103,13 @@ openssl rand -base64 32
 ```
 
 Copy the output and paste it as your `NEXTAUTH_SECRET` value.
+
+### Getting EMAIL_PASS (Gmail)
+1. Go to your [Google Account Settings](https://myaccount.google.com/)
+2. Search for "App Passwords"
+3. Create a new app password (e.g., "GitBattle Contact")
+4. Copy the **16-character code** and use it as `EMAIL_PASS`
+5. Set `EMAIL_USER` to your Gmail address
 
 ---
 

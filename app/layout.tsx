@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Link from 'next/link';
 import { ThemeProvider } from './components/ThemeProvider';
 import SessionProvider from './components/SessionProvider';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'GitBattle — Compare GitHub Profiles',
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen font-sans antialiased text-slate-900 dark:text-gray-100 overflow-x-hidden transition-colors duration-300 bg-white dark:bg-slate-900">
         <SessionProvider>
           <ThemeProvider>
+            <Toaster position="top-right" />
             <div className="flex flex-col min-h-screen">
               <Header />
 
@@ -43,8 +45,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                           </Link>
                         </li>
                         <li>
-                          <Link href="/docs" className="hover:text-brand-dark dark:hover:text-white transition-standard">
-                            Docs
+                          <Link href="/contact" className="hover:text-brand-dark dark:hover:text-white transition-standard">
+                            Contact
                           </Link>
                         </li>
                       </ul>
