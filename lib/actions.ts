@@ -12,11 +12,11 @@ const octokit = new Octokit({
 // Helper function to fetch and calculate stats
 async function getStats(username: string) {
   const { data: user } = await octokit.rest.users.getByUsername({ username });
-  
+
   // Fetch repositories to sum stars
-  const { data: repos } = await octokit.rest.repos.listForUser({ 
-    username, 
-    per_page: 100 
+  const { data: repos } = await octokit.rest.repos.listForUser({
+    username,
+    per_page: 100
   });
 
   const stars = repos.reduce((acc, repo) => acc + (repo.stargazers_count || 0), 0);
@@ -37,7 +37,7 @@ export async function battleAction(username1: string, username2: string) {
   try {
     const session = await auth();
     const [p1, p2] = await Promise.all([getStats(username1), getStats(username2)]);
-    
+
     const winner = p1.score > p2.score ? p1 : p2;
 
     // Only save to DB if a session exists (Policy compliance)
@@ -45,9 +45,9 @@ export async function battleAction(username1: string, username2: string) {
       await connectToDatabase();
       await Leaderboard.findOneAndUpdate(
         { username: winner.username },
-        { 
+        {
           $set: { avatar: winner.avatar, score: winner.score },
-          $inc: { battlesWon: 1 } 
+          $inc: { battlesWon: 1 }
         },
         { upsert: true, new: true }
       );
@@ -63,7 +63,7 @@ export async function battleAction(username1: string, username2: string) {
 export async function getLeaderboard() {
   try {
     await connectToDatabase();
-    return await Leaderboard.find().sort({ score: -1 }).limit(10).lean();
+    return await Leaderboard.find().sort({ score: -1 }).limit(50).lean();
   } catch (err) {
     return [];
   }

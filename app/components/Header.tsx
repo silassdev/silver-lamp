@@ -1,17 +1,15 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiSearch, FiGithub, FiUser } from 'react-icons/fi';
+import { FiMenu, FiX, FiGithub, FiUser, FiLogOut } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
-  const router = useRouter();
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const searchRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8);
@@ -19,42 +17,14 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Focus search on Cmd/Ctrl+K
-  useEffect(() => {
-    const onKey = (e) => {
-      const isK = (e.key === 'k' || e.key === 'K');
-      const mod = e.metaKey || e.ctrlKey;
-      if (mod && isK) {
-        e.preventDefault();
-        searchRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-    // Navigate to a compare page or profile lookup
-    router.push(`/compare/${encodeURIComponent(q)}`);
-    setQuery('');
-    setMobileOpen(false);
-  };
-
   const navItems = [
-    { label: 'Compare', href: '/compare' },
     { label: 'Leaderboard', href: '/leaderboard' },
-    { label: 'Docs', href: '/docs' },
-    { label: 'About', href: '/about' },
   ];
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-sm ${
-        isScrolled ? 'bg-white/70 dark:bg-slate-900/70 shadow-sm' : 'bg-transparent'
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-sm ${isScrolled ? 'bg-white/70 dark:bg-slate-900/70 shadow-sm' : 'bg-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -92,48 +62,38 @@ export default function Header() {
 
           {/* Right: actions */}
           <div className="flex items-center gap-3">
-            {/* Search (hidden on very small screens) */}
-            <form
-              onSubmit={handleSearch}
-              className="hidden sm:flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-full px-3 py-1 shadow-sm"
-              role="search"
-              aria-label="Search GitHub username"
-            >
-              <FiSearch className="w-4 h-4 text-slate-500" />
-              <input
-                ref={searchRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search GitHub username (press ⌘/Ctrl+K)"
-                className="w-40 md:w-64 bg-transparent placeholder:text-slate-400 focus:outline-none text-sm text-slate-900 dark:text-slate-100"
-                aria-label="Search username"
-              />
-              <button
-                type="submit"
-                className="text-sm font-semibold px-3 py-1 rounded-full bg-sky-600 text-white hover:bg-sky-500 transition"
-                aria-label="Search"
-              >
-                Go
-              </button>
-            </form>
-
             <div className="hidden sm:flex items-center gap-3">
               <ThemeToggle />
-              <Link
-                href="/battle/new"
-                className="text-sm font-semibold px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-500 transition"
-              >
-                New Battle
-              </Link>
 
-              {/* Sign in — link to your Auth.js signin route */}
-              <Link
-                href="/api/auth/signin"
-                className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 hover:underline"
-              >
-                <FiUser className="w-4 h-4" />
-                Sign in
-              </Link>
+              {session ? (
+                <div className="flex items-center gap-3">
+                  {session.user?.image && (
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="w-8 h-8 rounded-full"
+                    />
+                  )}
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    {session.user?.name || 'User'}
+                  </span>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors text-sm font-medium"
+                  >
+                    <FiLogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all text-sm font-bold shadow-sm hover:shadow-md"
+                >
+                  <FiUser className="w-4 h-4" />
+                  Sign In
+                </Link>
+              )}
             </div>
 
             {/* Mobile menu toggle */}
@@ -159,30 +119,6 @@ export default function Header() {
               className="md:hidden overflow-hidden"
             >
               <div className="pt-3 pb-4 space-y-3">
-                <form
-                  onSubmit={handleSearch}
-                  className="flex items-center gap-2 px-4"
-                  role="search"
-                  aria-label="Search GitHub username (mobile)"
-                >
-                  <div className="flex items-center gap-2 w-full bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-full px-3 py-2">
-                    <FiSearch className="w-4 h-4 text-slate-500" />
-                    <input
-                      ref={searchRef}
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search username"
-                      className="w-full bg-transparent text-sm placeholder:text-slate-400 focus:outline-none text-slate-900 dark:text-slate-100"
-                    />
-                    <button
-                      type="submit"
-                      className="text-sm font-semibold px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-500 transition"
-                    >
-                      Go
-                    </button>
-                  </div>
-                </form>
-
                 <div className="px-4">
                   <nav className="flex flex-col gap-2">
                     {navItems.map((item) => (
@@ -204,14 +140,37 @@ export default function Header() {
                       New Battle
                     </Link>
 
-                    <Link
-                      href="/api/auth/signin"
-                      onClick={() => setMobileOpen(false)}
-                      className="mt-2 inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                    >
-                      <FiUser className="w-4 h-4" />
-                      Sign in
-                    </Link>
+                    {session ? (
+                      <>
+                        <div className="px-3 py-2 flex items-center gap-3 border-t border-slate-200 dark:border-slate-800 mt-2">
+                          {session.user?.image && (
+                            <img src={session.user.image} alt="" className="w-8 h-8 rounded-full" />
+                          )}
+                          <span className="text-sm font-medium text-slate-700 dark:text-gray-200">
+                            {session.user?.name || 'User'}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setMobileOpen(false);
+                            signOut({ callbackUrl: '/' });
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                        >
+                          <FiLogOut className="w-4 h-4" />
+                          Sign out
+                        </button>
+                      </>
+                    ) : (
+                      <Link
+                        href="/login"
+                        onClick={() => setMobileOpen(false)}
+                        className="mt-2 inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                      >
+                        <FiUser className="w-4 h-4" />
+                        Sign in
+                      </Link>
+                    )}
 
                     <div className="mt-2 border-t border-slate-200 dark:border-slate-800 pt-3">
                       <ThemeToggle />
