@@ -88,9 +88,3 @@ GitBattle was built with a strong focus on professional engineering standards:
 * **User Experience**
   Fully responsive interface with accessible UI components, meaningful loading states, and clear data presentation.
 
----
-
-## License
-
-This project is released under the MIT License.
-You are free to use, modify, and distribute it in accordance with the license terms.
