@@ -132,14 +132,6 @@ export default function Header() {
                       </Link>
                     ))}
 
-                    <Link
-                      href="/battle/new"
-                      onClick={() => setMobileOpen(false)}
-                      className="mt-2 inline-flex items-center justify-center px-3 py-2 rounded-md bg-sky-600 text-white text-sm font-semibold hover:bg-sky-500 transition"
-                    >
-                      New Battle
-                    </Link>
-
                     {session ? (
                       <>
                         <div className="px-3 py-2 flex items-center gap-3 border-t border-slate-200 dark:border-slate-800 mt-2">
