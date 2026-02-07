@@ -15,7 +15,7 @@ const LeaderboardSchema = new Schema<ILeaderboard>(
     username: { 
       type: String, 
       required: true, 
-      unique: true, // Prevents duplicate entries for the same user
+      unique: true, // Prevents duplicate entries for the same users
       index: true 
     },
     avatar: { 
