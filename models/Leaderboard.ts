@@ -39,6 +39,4 @@ const LeaderboardSchema = new Schema<ILeaderboard>(
 );
 
 // 3. Export the Model
-// Note: In Next.js, we must check if the model already exists to prevent
-// errors during hot-reloading (development mode).
 export const Leaderboard = models.Leaderboard || model<ILeaderboard>("Leaderboard", LeaderboardSchema);
