@@ -34,7 +34,7 @@ const LeaderboardSchema = new Schema<ILeaderboard>(
     },
   },
   { 
-    timestamps: true // Automatically manages createdAt and updatedAt
+    timestamps: true
   }
 );
 
